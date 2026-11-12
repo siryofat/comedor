@@ -23,6 +23,7 @@
 
 @theme inline {
   --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', ui-serif, Georgia, serif;
 
   --color-page: var(--page);
   --color-sidebar: var(--sidebar);

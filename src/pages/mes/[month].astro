@@ -43,7 +43,7 @@ const firstWeek = rows.find((r) => r.menuWeek)?.weekStart
         direction="right"
       />
     </div>
-    <h2 class="text-xl font-extrabold">{title}</h2>
+    <h2 class="font-display text-2xl font-semibold lining-nums">{title}</h2>
   </div>
 
   <div class="rounded-3xl border border-line bg-surface p-3 sm:p-4">
@@ -70,7 +70,9 @@ const firstWeek = rows.find((r) => r.menuWeek)?.weekStart
               >
                 <span class="flex items-baseline justify-between gap-2">
                   <span class="flex items-baseline gap-2">
-                    <span class="text-xl font-black tabular-nums">{num}</span>
+                    <span class="font-display text-2xl leading-none font-semibold lining-nums tabular-nums">
+                      {num}
+                    </span>
                     <span class="text-sm font-bold capitalize md:hidden">{weekday}</span>
                     <span class="today-only rounded-md bg-ink px-2 text-xs font-extrabold text-white">
                       Hoy
@@ -84,7 +86,9 @@ const firstWeek = rows.find((r) => r.menuWeek)?.weekStart
               </a>
             ) : (
               <div class="flex min-h-14 items-baseline gap-2 rounded-2xl border-2 border-dashed border-line-soft p-3 text-muted md:min-h-28 md:flex-col md:gap-1">
-                <span class="text-xl font-black tabular-nums">{num}</span>
+                <span class="font-display text-2xl leading-none font-semibold lining-nums tabular-nums">
+                  {num}
+                </span>
                 <span class="text-sm font-semibold">Sin comedor</span>
               </div>
             )

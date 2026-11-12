@@ -52,7 +52,7 @@ const heading = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${formatD
           Hoy
         </span>
       </div>
-      <h2 id="lunch-title" class="mt-1 text-3xl font-black tracking-tight">{heading}</h2>
+      <h2 id="lunch-title" class="mt-1 font-display text-3xl font-bold lining-nums">{heading}</h2>
 
       <dl class="mt-6">
         <div class="border-t border-line-soft py-4">
@@ -61,7 +61,7 @@ const heading = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${formatD
         </div>
         <div class="border-t border-line-soft py-4">
           <dt class="text-sm font-bold text-muted">Segundo plato</dt>
-          <dd class="mt-0.5 text-3xl leading-tight font-black tracking-tight text-balance">
+          <dd class="mt-1 font-display text-3xl leading-tight font-semibold text-balance">
             {lunch.main_course}
           </dd>
         </div>

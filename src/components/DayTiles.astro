@@ -29,7 +29,7 @@ const weekday = (date: ISODate) => {
             <span class="sm:hidden">{weekday(date).slice(0, 3)}</span>
             <span class="hidden sm:inline">{weekday(date)}</span>
           </span>
-          <span class="text-2xl leading-none font-black tabular-nums sm:text-3xl">
+          <span class="font-display text-2xl leading-none font-semibold lining-nums tabular-nums sm:text-3xl">
             {formatDate(date, { day: 'numeric' })}
           </span>
           <span class="today-only text-xs font-extrabold">Hoy</span>
