@@ -1,0 +1,159 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { SCHOOL_URL, homeHref } from '../lib/routes'
+
+/** El "menú" de una página que no existe. */
+const courses = [
+  { label: 'Primer plato', dish: 'No encontrado' },
+  { label: 'Segundo plato', dish: 'Tampoco' },
+  { label: 'Postre', dish: 'Error 404' },
+]
+---
+
+<Layout title="Comida no encontrada" description="Esta página no existe, pero el menú sí">
+  <div class="mx-auto flex max-w-3xl flex-col items-center gap-10 py-6 text-center md:py-12">
+    <svg
+      viewBox="0 0 260 200"
+      class="w-full max-w-xs"
+      role="img"
+      aria-labelledby="plate-title"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <title id="plate-title">Un plato vacío con su tenedor y su cuchillo</title>
+
+      <!-- Signos de interrogación flotando sobre el plato -->
+      <g class="fill-mint-deep font-display font-bold">
+        <text x="196" y="40" font-size="30" class="question q1">?</text>
+        <text x="56" y="34" font-size="20" class="question q2">?</text>
+      </g>
+
+      <!-- Sombra -->
+      <ellipse cx="130" cy="184" rx="66" ry="7" class="fill-line"></ellipse>
+
+      <!-- Plato -->
+      <g class="plate">
+        <circle cx="130" cy="108" r="72" class="fill-surface stroke-line" stroke-width="3"></circle>
+        <circle cx="130" cy="108" r="50" class="fill-page stroke-line-soft" stroke-width="3"
+        ></circle>
+        <path
+          d="M98 82 A40 40 0 0 1 128 66"
+          fill="none"
+          class="stroke-surface"
+          stroke-width="5"
+          stroke-linecap="round"></path>
+        <!-- Las únicas migas que quedan -->
+        <g class="fill-brown/60">
+          <circle cx="146" cy="122" r="2.6"></circle>
+          <circle cx="154" cy="116" r="1.6"></circle>
+          <circle cx="118" cy="130" r="1.8"></circle>
+        </g>
+      </g>
+
+      <!-- Tenedor -->
+      <g class="stroke-muted" stroke-linecap="round" fill="none">
+        <path d="M24 46 V78 M32 46 V78 M40 46 V78" stroke-width="3.5"></path>
+        <path d="M24 78 Q32 92 40 78" stroke-width="3.5"></path>
+        <path d="M32 90 V172" stroke-width="7"></path>
+      </g>
+
+      <!-- Cuchillo -->
+      <g class="fill-muted stroke-muted" stroke-linecap="round">
+        <path
+          d="M228 44 C244 62 244 100 232 112 L228 112 Z"
+          stroke-width="2"
+          stroke-linejoin="round"></path>
+        <path d="M230 112 V172" stroke-width="7" fill="none"></path>
+      </g>
+    </svg>
+
+    <div>
+      <p class="text-sm font-extrabold tracking-widest text-mint-deep uppercase">Error 404</p>
+      <h1 class="mt-2 font-display text-4xl leading-tight font-bold text-brown sm:text-5xl">
+        Comida no encontrada
+      </h1>
+      <p class="mx-auto mt-3 max-w-lg text-lg text-muted">
+        Aquí no queda ni una miga. Puede que el enlace esté mal o que ese día no haya comedor en el
+        curso 2026/27.
+      </p>
+    </div>
+
+    <dl
+      class="w-full max-w-sm rounded-2xl border border-dashed border-line bg-surface px-6 py-5 text-left shadow-sm"
+    >
+      <p class="mb-3 text-center font-display text-lg font-bold">Menú del día</p>
+      {
+        courses.map((c) => (
+          <div class="flex items-baseline gap-2 border-t border-line-soft py-2">
+            <dt class="text-sm font-bold text-muted">{c.label}</dt>
+            <span class="flex-1 border-b border-dotted border-line" aria-hidden="true" />
+            <dd class="font-semibold">{c.dish}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="flex flex-wrap justify-center gap-3">
+      <a
+        href={homeHref()}
+        class="rounded-full border-2 border-mint-deep bg-mint-deep px-6 py-3 font-bold text-white shadow-sm transition hover:brightness-110"
+      >
+        Ver el menú de hoy
+      </a>
+      <a
+        href={SCHOOL_URL}
+        rel="noopener"
+        class="rounded-full border-2 border-mint-deep px-6 py-3 font-bold text-mint-deep transition hover:bg-mint-soft"
+      >
+        Web del colegio
+      </a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .plate {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: wobble 4s ease-in-out infinite;
+  }
+
+  .question {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .q2 {
+    animation-delay: -1.5s;
+  }
+
+  @keyframes wobble {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-3deg);
+    }
+    75% {
+      transform: rotate(3deg);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(-6px);
+      opacity: 0.6;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plate,
+    .question {
+      animation: none;
+    }
+  }
+</style>

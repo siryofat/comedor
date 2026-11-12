@@ -28,3 +28,6 @@ coverage/
 .husky/_/
 .env.*
 !.env.example
+
+# wrangler local state
+.wrangler/
