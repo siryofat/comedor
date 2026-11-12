@@ -66,7 +66,7 @@ const firstWeek = rows.find((r) => r.menuWeek)?.weekStart
                 href={dayHref(cell.date)}
                 data-date={cell.date}
                 style={weekStyle(day.menuWeek)}
-                class="flex flex-col rounded-2xl border-2 border-transparent bg-(--wk-tint) p-3 hover:border-(--wk) md:min-h-28 [&[data-today]]:border-ink"
+                class="flex flex-col rounded-2xl border-2 border-transparent bg-(--wk-tint) p-3 hover:border-(--wk) data-today:border-ink md:min-h-28"
               >
                 <span class="flex items-baseline justify-between gap-2">
                   <span class="flex items-baseline gap-2">

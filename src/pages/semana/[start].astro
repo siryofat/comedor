@@ -42,7 +42,7 @@ const weekday = (date: string) => {
         <li
           data-date={date}
           class:list={[
-            'flex flex-col overflow-hidden rounded-2xl border-2 [&[data-today]]:border-ink',
+            'flex flex-col overflow-hidden rounded-2xl border-2 data-today:border-ink',
             schoolDay ? 'border-line bg-surface' : 'border-dashed border-line',
           ]}
         >

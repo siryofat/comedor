@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css'
 import { menuIndex, type ISODate } from '../lib/menu'
-import { dayHref, monthHref, weekHref } from '../lib/routes'
+import { SCHOOL_URL, dayHref, legalHref, monthHref, weekHref } from '../lib/routes'
 import { weekColor } from '../lib/weekColors'
 
 interface Props {
@@ -20,7 +20,8 @@ const pageTitle = `${title} | ${siteName}`
 
 const anchor = weekStart ?? weeks[0].start
 // En el calendario se ven varias rotaciones a la vez: no se marca ninguna.
-const currentRotation = section === 'calendario' ? undefined : menuIndex.getWeek(anchor)?.menuWeek
+const currentRotation =
+  section === 'calendario' || !weekStart ? undefined : menuIndex.getWeek(weekStart)?.menuWeek
 // Cada número lleva a la próxima semana con esa rotación desde la que se está viendo.
 const rotation = menu.weekly_menus.map(({ week }) => {
   const target =
@@ -137,8 +138,11 @@ const links = [
             </p>
           </section>
 
-          <p class="mt-auto hidden px-6 pb-6 text-xs leading-relaxed text-muted lg:block">
-            Colectividades Antonia Navarro
+          <p class="mt-auto hidden px-6 pb-6 text-sm leading-relaxed text-muted lg:block">
+            Información oficial en la{' '}
+            <a href={SCHOOL_URL} rel="noopener" class="font-bold text-mint-deep underline">
+              web del colegio
+            </a>
           </p>
         </aside>
       </div>
@@ -148,10 +152,21 @@ const links = [
           <slot />
         </main>
         <footer class="mx-auto max-w-6xl px-4 pb-10 sm:px-8 lg:px-12">
-          <p class="max-w-2xl text-sm leading-relaxed text-muted">
-            Transcrito del menú basal del curso 2026/27. El calendario reproduce lo impreso y no
-            confirma festivos ni días sin comedor; para eso, consulta el calendario escolar.
-          </p>
+          <div
+            class="max-w-2xl space-y-2 border-t border-line pt-5 text-sm leading-relaxed text-muted"
+          >
+            <p>
+              Página personal sin relación con el colegio ni con la empresa del comedor. Solo
+              muestra el menú publicado de forma más cómoda; no garantiza que coincida con lo que se
+              sirve ni informa sobre alérgenos.
+            </p>
+            <p class="flex flex-wrap gap-x-5 gap-y-1 font-bold">
+              <a href={legalHref()} class="text-mint-deep underline">Aviso legal</a>
+              <a href={SCHOOL_URL} rel="noopener" class="text-mint-deep underline">
+                Información oficial del comedor
+              </a>
+            </p>
+          </div>
         </footer>
       </div>
     </div>

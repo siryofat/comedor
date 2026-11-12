@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * Colores tomados del menú impreso de Colectividades Antonia Navarro:
+ * Colores tomados del menú impreso:
  * verde menta y marrón de la marca, y un color por semana de rotación
  * (ver src/lib/weekColors.ts). Solo modo claro.
  */
