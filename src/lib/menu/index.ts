@@ -87,6 +87,29 @@ export function createMenuIndex(menu: SchoolMenu) {
       ),
     monthNeighbors: (month: MonthKey) => neighbors(months, months.indexOf(month)),
 
+    /**
+     * Semana con la rotación `menuWeek` dentro del mismo ciclo que la semana
+     * `anchor`. Si el ciclo está incompleto (inicio o final de curso), la
+     * semana más cercana con esa rotación.
+     */
+    rotationWeek(anchor: ISODate, menuWeek: number): CalendarWeek | undefined {
+      const i = Math.max(
+        weeks.findIndex((w) => w.start === anchor),
+        0
+      )
+      const sameCycle = weeks[i + menuWeek - weeks[i].menuWeek]
+      if (sameCycle?.menuWeek === menuWeek) return sameCycle
+      let best: CalendarWeek | undefined
+      let bestDistance = Infinity
+      weeks.forEach((w, j) => {
+        if (w.menuWeek === menuWeek && Math.abs(j - i) < bestDistance) {
+          best = w
+          bestDistance = Math.abs(j - i)
+        }
+      })
+      return best
+    },
+
     /** Rows of lunes–viernes cells covering every weekday of the month. */
     monthGrid(month: MonthKey): MonthRow[] {
       const rows: MonthRow[] = []

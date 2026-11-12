@@ -22,11 +22,9 @@ const anchor = weekStart ?? weeks[0].start
 // En el calendario se ven varias rotaciones a la vez: no se marca ninguna.
 const currentRotation =
   section === 'calendario' || !weekStart ? undefined : menuIndex.getWeek(weekStart)?.menuWeek
-// Cada número lleva a la próxima semana con esa rotación desde la que se está viendo.
+// Cada número lleva a esa semana dentro del ciclo de rotación que se está viendo.
 const rotation = menu.weekly_menus.map(({ week }) => {
-  const target =
-    weeks.find((w) => w.menuWeek === week && w.start >= anchor) ??
-    weeks.find((w) => w.menuWeek === week)!
+  const target = menuIndex.rotationWeek(anchor, week)!
   return { week, href: weekHref(target.start), color: weekColor(week) }
 })
 

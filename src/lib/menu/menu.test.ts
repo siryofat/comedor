@@ -123,3 +123,26 @@ describe('dates', () => {
     expect(nearestAtOrBefore(keys, '2027-07')).toBe('2026-12')
   })
 })
+
+describe('rotationWeek', () => {
+  const start = (anchor: string, n: number) => menuIndex.rotationWeek(anchor, n)?.start
+
+  it('stays within the cycle of the anchor week', () => {
+    // 2026-11-09 is rotation 4; its cycle runs from 2026-10-19 (1) to 2026-11-23 (6).
+    expect(start('2026-11-09', 3)).toBe('2026-11-02')
+    expect(start('2026-11-09', 5)).toBe('2026-11-16')
+    expect(start('2026-11-09', 1)).toBe('2026-10-19')
+  })
+
+  it('returns the same week when switching back and forth', () => {
+    const three = start('2026-11-09', 3)!
+    const four = start(three, 4)!
+    expect(four).toBe('2026-11-09')
+    expect(start(four, 3)).toBe(three)
+  })
+
+  it('falls back to the nearest week when the cycle is incomplete', () => {
+    // The last calendar week (2026-06-28) starts a cycle that never finishes.
+    expect(start('2027-06-28', 4)).toBe('2027-06-07')
+  })
+})
