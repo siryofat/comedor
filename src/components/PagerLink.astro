@@ -1,0 +1,25 @@
+---
+import Chevron from './Chevron.astro'
+
+interface Props {
+  href?: string
+  label: string
+  direction: 'left' | 'right'
+}
+
+const { href, label, direction } = Astro.props
+const base =
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-ink'
+---
+
+{
+  href ? (
+    <a href={href} aria-label={label} title={label} class:list={[base, 'hover:border-ink']}>
+      <Chevron direction={direction} />
+    </a>
+  ) : (
+    <span class:list={[base, 'opacity-40']} aria-hidden="true">
+      <Chevron direction={direction} />
+    </span>
+  )
+}

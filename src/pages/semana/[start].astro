@@ -1,0 +1,97 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Layout from '../../layouts/Layout.astro'
+import PageIntro from '../../components/PageIntro.astro'
+import WeekToolbar from '../../components/WeekToolbar.astro'
+import { formatDate, menuIndex, type CalendarWeek } from '../../lib/menu'
+import { dayHref } from '../../lib/routes'
+import { weekStyle } from '../../lib/weekColors'
+
+export const getStaticPaths = (() =>
+  menuIndex.weeks.map((week) => ({
+    params: { start: week.start },
+    props: { week },
+  }))) satisfies GetStaticPaths
+
+interface Props {
+  week: CalendarWeek
+}
+
+const { week } = Astro.props
+const kcal = new Intl.NumberFormat('es-ES')
+const weekday = (date: string) => {
+  const name = formatDate(date, { weekday: 'long' })
+  return name.charAt(0).toUpperCase() + name.slice(1)
+}
+---
+
+<Layout
+  title={`Semana del ${formatDate(week.start, { day: 'numeric', month: 'long' })}`}
+  section="menu"
+  weekStart={week.start}
+>
+  <PageIntro
+    title="¿Qué hay de comer?"
+    lead="El menú del comedor y lo que propone para el resto del día."
+  />
+  <WeekToolbar week={week} view="week" />
+
+  <ol class="grid gap-3 md:grid-cols-5" style={weekStyle(week.menuWeek)}>
+    {
+      week.days.map(({ date, schoolDay }) => (
+        <li
+          data-date={date}
+          class:list={[
+            'flex flex-col overflow-hidden rounded-2xl border-2 [&[data-today]]:border-ink',
+            schoolDay ? 'border-line bg-surface' : 'border-dashed border-line',
+          ]}
+        >
+          <div
+            class:list={[
+              'flex items-baseline justify-between gap-2 px-4 py-3',
+              schoolDay && 'bg-(--wk-tint)',
+            ]}
+          >
+            <span class="font-extrabold">{weekday(date)}</span>
+            <span class="flex items-baseline gap-2">
+              <span class="today-only rounded-md bg-ink px-2 text-xs font-extrabold text-white">
+                Hoy
+              </span>
+              <span class="text-xl font-black tabular-nums">
+                {formatDate(date, { day: 'numeric' })}
+              </span>
+            </span>
+          </div>
+          {schoolDay ? (
+            <a href={dayHref(date)} class="group flex flex-1 flex-col gap-4 p-4">
+              <div class="space-y-1.5">
+                <p class="text-sm font-semibold text-muted">
+                  {schoolDay.menu.school_lunch.first_course}
+                </p>
+                <p class="text-lg leading-snug font-extrabold group-hover:underline">
+                  {schoolDay.menu.school_lunch.main_course}
+                </p>
+                <p class="text-sm font-semibold text-muted">
+                  {schoolDay.menu.school_lunch.dessert}
+                </p>
+              </div>
+              <p class="text-sm font-bold text-muted tabular-nums">
+                {kcal.format(schoolDay.menu.school_lunch.nutrition.energy_kcal)} kcal
+              </p>
+              <div class="mt-auto border-t border-line-soft pt-3">
+                <p class="text-sm font-extrabold text-(--wk-deep)">Para cenar</p>
+                <ul class="mt-1 space-y-0.5 text-sm leading-snug font-semibold">
+                  {schoolDay.menu.suggested_meals.dinner.map((d) => (
+                    <li>{d}</li>
+                  ))}
+                </ul>
+              </div>
+            </a>
+          ) : (
+            <p class="p-4 text-sm font-semibold text-muted">Sin comedor</p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</Layout>

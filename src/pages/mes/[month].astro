@@ -1,0 +1,110 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Layout from '../../layouts/Layout.astro'
+import PageIntro from '../../components/PageIntro.astro'
+import PagerLink from '../../components/PagerLink.astro'
+import { DAY_KEYS, formatDate, formatMonth, menuIndex, type MonthKey } from '../../lib/menu'
+import { dayHref, monthHref } from '../../lib/routes'
+import { WEEK_COLORS, weekStyle } from '../../lib/weekColors'
+
+export const getStaticPaths = (() =>
+  menuIndex.months.map((month) => ({
+    params: { month },
+    props: { month },
+  }))) satisfies GetStaticPaths
+
+interface Props {
+  month: MonthKey
+}
+
+const { month } = Astro.props
+const rows = menuIndex.monthGrid(month)
+const { prev, next } = menuIndex.monthNeighbors(month)
+const title = formatMonth(month)
+const firstWeek = rows.find((r) => r.menuWeek)?.weekStart
+---
+
+<Layout title={title} section="calendario" weekStart={firstWeek}>
+  <PageIntro
+    title="Calendario"
+    lead="Cada día con comedor lleva el color de su semana de rotación, como en el menú impreso."
+  />
+
+  <div class="mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+    <div class="flex gap-2">
+      <PagerLink
+        href={prev && monthHref(prev)}
+        label={prev ? formatMonth(prev) : ''}
+        direction="left"
+      />
+      <PagerLink
+        href={next && monthHref(next)}
+        label={next ? formatMonth(next) : ''}
+        direction="right"
+      />
+    </div>
+    <h2 class="text-xl font-extrabold">{title}</h2>
+  </div>
+
+  <div class="rounded-3xl border border-line bg-surface p-3 sm:p-4">
+    <div
+      class="hidden grid-cols-5 gap-2 px-1 pb-2 text-sm font-bold text-muted md:grid"
+      aria-hidden="true"
+    >
+      {DAY_KEYS.map((d) => <span class="capitalize">{d}</span>)}
+    </div>
+    <div class="grid gap-2 md:grid-cols-5">
+      {
+        rows.flatMap((row) =>
+          row.cells.map((cell) => {
+            if (!cell.inMonth) return <div class="hidden md:block" aria-hidden="true" />
+            const day = cell.schoolDay
+            const num = formatDate(cell.date, { day: 'numeric' })
+            const weekday = formatDate(cell.date, { weekday: 'long' })
+            return day ? (
+              <a
+                href={dayHref(cell.date)}
+                data-date={cell.date}
+                style={weekStyle(day.menuWeek)}
+                class="flex flex-col rounded-2xl border-2 border-transparent bg-(--wk-tint) p-3 hover:border-(--wk) md:min-h-28 [&[data-today]]:border-ink"
+              >
+                <span class="flex items-baseline justify-between gap-2">
+                  <span class="flex items-baseline gap-2">
+                    <span class="text-xl font-black tabular-nums">{num}</span>
+                    <span class="text-sm font-bold capitalize md:hidden">{weekday}</span>
+                    <span class="today-only rounded-md bg-ink px-2 text-xs font-extrabold text-white">
+                      Hoy
+                    </span>
+                  </span>
+                  <span class="text-xs font-extrabold text-(--wk-deep)">S{day.menuWeek}</span>
+                </span>
+                <span class="mt-2 text-sm leading-snug font-bold">
+                  {day.menu.school_lunch.main_course}
+                </span>
+              </a>
+            ) : (
+              <div class="flex min-h-14 items-baseline gap-2 rounded-2xl border-2 border-dashed border-line-soft p-3 text-muted md:min-h-28 md:flex-col md:gap-1">
+                <span class="text-xl font-black tabular-nums">{num}</span>
+                <span class="text-sm font-semibold">Sin comedor</span>
+              </div>
+            )
+          })
+        )
+      }
+    </div>
+  </div>
+
+  <ul class="mt-5 flex flex-wrap gap-2" aria-label="Semanas de rotación">
+    {
+      WEEK_COLORS.map((c, i) => (
+        <li
+          class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-extrabold"
+          style={`background:${c.tint};color:${c.deep}`}
+        >
+          <span class="size-2.5 rounded-sm" style={`background:${c.base}`} aria-hidden="true" />
+          Semana {i + 1}
+        </li>
+      ))
+    }
+  </ul>
+</Layout>

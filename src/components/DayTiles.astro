@@ -1,0 +1,63 @@
+---
+import { formatDate, type CalendarWeek, type ISODate } from '../lib/menu'
+import { dayHref } from '../lib/routes'
+import { weekStyle } from '../lib/weekColors'
+
+interface Props {
+  week: CalendarWeek
+  selected: ISODate
+}
+
+const { week, selected } = Astro.props
+const weekday = (date: ISODate) => {
+  const name = formatDate(date, { weekday: 'long' })
+  return name.charAt(0).toUpperCase() + name.slice(1)
+}
+---
+
+<ol
+  class="mb-6 grid grid-cols-5 gap-2 sm:gap-3"
+  style={weekStyle(week.menuWeek)}
+  aria-label="Días de la semana"
+>
+  {
+    week.days.map(({ date, schoolDay }) => {
+      const isSelected = date === selected
+      const inner = (
+        <>
+          <span class="text-xs font-bold sm:text-sm">
+            <span class="sm:hidden">{weekday(date).slice(0, 3)}</span>
+            <span class="hidden sm:inline">{weekday(date)}</span>
+          </span>
+          <span class="text-2xl leading-none font-black tabular-nums sm:text-3xl">
+            {formatDate(date, { day: 'numeric' })}
+          </span>
+          <span class="today-only text-xs font-extrabold">Hoy</span>
+        </>
+      )
+      const tile =
+        'flex min-h-24 flex-col items-center justify-center gap-1 rounded-2xl border-2 px-1 py-2 text-center'
+      return (
+        <li data-date={date}>
+          {!schoolDay ? (
+            <span class:list={[tile, 'border-dashed border-line text-muted']}>{inner}</span>
+          ) : isSelected ? (
+            <span aria-current="page" class:list={[tile, 'border-(--wk-deep) bg-(--wk) text-ink']}>
+              {inner}
+            </span>
+          ) : (
+            <a
+              href={dayHref(date)}
+              class:list={[
+                tile,
+                'border-line bg-surface text-muted hover:border-(--wk) hover:text-ink',
+              ]}
+            >
+              {inner}
+            </a>
+          )}
+        </li>
+      )
+    })
+  }
+</ol>

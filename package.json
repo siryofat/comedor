@@ -21,27 +21,28 @@
     "prepare": "node .husky/install.mjs"
   },
   "dependencies": {
-    "astro": "^7.4.10"
+    "astro": "^7.4.10",
+    "zod": "4.6.7"
   },
   "devDependencies": {
-    "prettier": "^3.9.4",
-    "prettier-plugin-tailwindcss": "^0.8.0",
+    "@astrojs/check": "^0.9.10",
+    "@commitlint/cli": "^21.2.0",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.2",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-astro": "^2.1.1",
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
-    "@commitlint/cli": "^21.2.0",
-    "@commitlint/config-conventional": "^21.2.0",
-    "vitest": "^4.0.15",
-    "typescript": "^6.0.3",
-    "tailwindcss": "^4.3.2",
-    "@eslint/js": "^10.0.1",
-    "typescript-eslint": "^8.62.1",
-    "eslint-plugin-astro": "^2.1.1",
+    "prettier": "^3.9.4",
     "prettier-plugin-astro": "^0.14.1",
-    "@astrojs/check": "^0.9.10",
-    "@tailwindcss/vite": "^4.3.2"
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "tailwindcss": "^4.3.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.1",
+    "vitest": "^4.0.15"
   },
   "packageManager": "pnpm@10.33.0"
 }
