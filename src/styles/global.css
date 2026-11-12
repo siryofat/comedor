@@ -1,1 +1,67 @@
 @import 'tailwindcss';
+
+/*
+ * Colores tomados del menú impreso:
+ * verde menta y marrón de la marca, y un color por semana de rotación
+ * (ver src/lib/weekColors.ts). Solo modo claro.
+ */
+:root {
+  --page: #faf8f3;
+  --sidebar: #f4f1ea;
+  --surface: #ffffff;
+  --ink: #2d1f14;
+  --muted: #6b5e52;
+  --line: #e9e3d7;
+  --line-soft: #efeae0;
+  --mint: #70d0a4;
+  --mint-soft: #e3f5ec;
+  --mint-deep: #17775a;
+  --brown: #613316;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', ui-serif, Georgia, serif;
+
+  --color-page: var(--page);
+  --color-sidebar: var(--sidebar);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-mint: var(--mint);
+  --color-mint-soft: var(--mint-soft);
+  --color-mint-deep: var(--mint-deep);
+  --color-brown: var(--brown);
+}
+
+@layer base {
+  html {
+    background-color: var(--page);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--page);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--mint-deep);
+    outline-offset: 2px;
+  }
+}
+
+/* Marcas que solo aparecen en la fecha de hoy (las activa un script en el cliente). */
+@utility today-only {
+  display: none;
+
+  [data-today] & {
+    display: inline-flex;
+  }
+}

@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro'
+import PageIntro from '../components/PageIntro.astro'
+import { SCHOOL_URL } from '../lib/routes'
+
+const sections = [
+  {
+    title: 'Qué es esta página',
+    body: [
+      'Es un proyecto personal, hecho por afición, para consultar el menú del comedor escolar desde el móvil o el ordenador de forma rápida y cómoda. No tiene ánimo de lucro ni publicidad.',
+    ],
+  },
+  {
+    title: 'Sin relación con el colegio ni con el servicio de comedor',
+    body: [
+      'Esta página no pertenece al colegio, a la administración educativa ni a la empresa que presta el servicio de comedor, y no actúa en su nombre. Su autor no tiene relación con ninguno de ellos ni responsabilidad alguna sobre el servicio.',
+    ],
+  },
+  {
+    title: 'Exactitud del menú',
+    body: [
+      'El contenido se ha transcrito a mano del menú publicado por el colegio y puede contener errores. Tampoco refleja cambios de última hora, festivos ni días sin comedor.',
+      'No se garantiza que lo que se muestra aquí coincida con la comida que realmente se sirve. Ante cualquier duda, la referencia es siempre el menú oficial del colegio.',
+    ],
+  },
+  {
+    title: 'Alergias e intolerancias',
+    body: [
+      'Esta página no informa sobre alérgenos, ingredientes ni dietas especiales. Los valores nutricionales se copian tal como aparecen en el documento original, sin revisar. Si tu hijo o hija tiene alguna alergia o intolerancia, consulta directamente con el colegio y con el servicio de comedor.',
+    ],
+  },
+  {
+    title: 'Datos personales',
+    body: [
+      'La página no tiene formularios, cuentas ni herramientas de analítica, y no guarda datos de quien la visita. Las tipografías se cargan desde Google Fonts, por lo que tu navegador se conecta a los servidores de Google al abrirla.',
+    ],
+  },
+]
+---
+
+<Layout title="Aviso legal" description="Aviso legal y alcance de esta página">
+  <PageIntro title="Aviso legal" lead="Una forma cómoda de ver el menú del comedor. Nada más." />
+
+  <div class="max-w-2xl space-y-8">
+    {
+      sections.map((s) => (
+        <section>
+          <h2 class="font-display text-2xl font-bold">{s.title}</h2>
+          {s.body.map((p) => (
+            <p class="mt-2 leading-relaxed">{p}</p>
+          ))}
+        </section>
+      ))
+    }
+
+    <section>
+      <h2 class="font-display text-2xl font-bold">Información oficial</h2>
+      <p class="mt-2 leading-relaxed">
+        El menú, los avisos y cualquier información sobre el comedor están en la{' '}
+        <a href={SCHOOL_URL} rel="noopener" class="font-bold text-mint-deep underline">
+          web del colegio</a
+        >.
+      </p>
+    </section>
+  </div>
+</Layout>

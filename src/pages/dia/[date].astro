@@ -1,0 +1,87 @@
+---
+import type { GetStaticPaths } from 'astro'
+import Layout from '../../layouts/Layout.astro'
+import DayTiles from '../../components/DayTiles.astro'
+import NutritionPanel from '../../components/NutritionPanel.astro'
+import PageIntro from '../../components/PageIntro.astro'
+import SuggestedMeals from '../../components/SuggestedMeals.astro'
+import WeekToolbar from '../../components/WeekToolbar.astro'
+import { formatDate, formatLongDate, menuIndex, weekdayIndex, type SchoolDay } from '../../lib/menu'
+import { weekStyle } from '../../lib/weekColors'
+
+export const getStaticPaths = (() =>
+  menuIndex.schoolDays.map((day) => ({
+    params: { date: day.date },
+    props: { day },
+  }))) satisfies GetStaticPaths
+
+interface Props {
+  day: SchoolDay
+}
+
+const { day } = Astro.props
+const { school_lunch: lunch, suggested_meals: meals } = day.menu
+const week = menuIndex.getWeek(day.weekStart)!
+const weekday = formatDate(day.date, { weekday: 'long' })
+const heading = `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${formatDate(day.date, { day: 'numeric', month: 'long' })}`
+---
+
+<Layout
+  title={formatLongDate(day.date)}
+  description={`${lunch.first_course} y ${lunch.main_course}`}
+  section="menu"
+  weekStart={day.weekStart}
+>
+  <PageIntro
+    title="¿Qué hay de comer?"
+    lead="El menú del comedor y lo que propone para el resto del día."
+  />
+  <WeekToolbar week={week} view="day" dayIndex={weekdayIndex(day.date)} />
+  <DayTiles week={week} selected={day.date} />
+
+  <div class="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+    <section
+      class="rounded-3xl border border-line bg-surface p-6 sm:p-8"
+      aria-labelledby="lunch-title"
+      data-date={day.date}
+      style={weekStyle(day.menuWeek)}
+    >
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <p class="text-sm font-extrabold text-mint-deep">En el colegio</p>
+        <span class="today-only rounded-lg bg-ink px-2.5 py-0.5 text-sm font-extrabold text-white">
+          Hoy
+        </span>
+      </div>
+      <h2 id="lunch-title" class="mt-1 font-display text-3xl font-bold lining-nums">{heading}</h2>
+
+      <dl class="mt-6">
+        <div class="border-t border-line-soft py-4">
+          <dt class="text-sm font-bold text-muted">Primer plato</dt>
+          <dd class="mt-0.5 text-xl font-bold">{lunch.first_course}</dd>
+        </div>
+        <div class="border-t border-line-soft py-4">
+          <dt class="text-sm font-bold text-muted">Segundo plato</dt>
+          <dd class="mt-1 font-display text-3xl leading-tight font-semibold text-balance">
+            {lunch.main_course}
+          </dd>
+        </div>
+        <div class="grid grid-cols-2 gap-4 border-t border-line-soft py-4">
+          <div>
+            <dt class="text-sm font-bold text-muted">Postre</dt>
+            <dd class="mt-0.5 font-bold">{lunch.dessert}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-bold text-muted">Pan</dt>
+            <dd class="mt-0.5 font-bold">{lunch.bread}</dd>
+          </div>
+        </div>
+      </dl>
+
+      <div class="mt-2">
+        <NutritionPanel nutrition={lunch.nutrition} />
+      </div>
+    </section>
+
+    <SuggestedMeals meals={meals} menuWeek={day.menuWeek} />
+  </div>
+</Layout>

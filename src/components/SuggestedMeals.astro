@@ -1,0 +1,44 @@
+---
+import type { SuggestedMeals } from '../lib/menu'
+import { weekStyle } from '../lib/weekColors'
+
+interface Props {
+  meals: SuggestedMeals
+  menuWeek: number
+}
+
+const { meals, menuWeek } = Astro.props
+
+const sections = [
+  { label: 'Desayuno', items: meals.breakfast },
+  { label: 'Merienda', items: meals.afternoon_snack },
+  { label: 'Cena', items: meals.dinner },
+]
+---
+
+<section
+  aria-labelledby="suggested-title"
+  class="rounded-3xl bg-(--wk-tint) p-6 sm:p-7"
+  style={weekStyle(menuWeek)}
+>
+  <p class="text-sm font-extrabold text-(--wk-deep)">Para completar el día</p>
+  <h2 id="suggested-title" class="mt-1 font-display text-3xl font-bold">Y en casa</h2>
+  <p class="mt-1 text-muted">Lo que propone el comedor para acompañar el menú del día.</p>
+
+  <dl class="mt-5">
+    {
+      sections.map((s) => (
+        <div class="border-t border-(--wk)/60 py-4 last:pb-0">
+          <dt class="font-extrabold text-(--wk-deep)">{s.label}</dt>
+          <dd>
+            <ul class="mt-1 space-y-1 leading-snug font-semibold">
+              {s.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>

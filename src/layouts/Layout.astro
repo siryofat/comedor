@@ -1,27 +1,206 @@
 ---
 import '../styles/global.css'
+import { menuIndex, type ISODate } from '../lib/menu'
+import { SCHOOL_URL, dayHref, legalHref, monthHref, weekHref } from '../lib/routes'
+import { weekColor } from '../lib/weekColors'
+
+interface Props {
+  title: string
+  description?: string
+  /** Sección del menú lateral marcada como actual. */
+  section?: 'menu' | 'calendario'
+  /** Semana del calendario que se está viendo; marca su rotación en el lateral. */
+  weekStart?: ISODate
+}
+
+const { title, description, section, weekStart } = Astro.props
+const { menu, weeks, months, schoolDays } = menuIndex
+const siteName = 'Comedor escolar'
+const pageTitle = `${title} | ${siteName}`
+
+const anchor = weekStart ?? weeks[0].start
+// En el calendario se ven varias rotaciones a la vez: no se marca ninguna.
+const currentRotation =
+  section === 'calendario' || !weekStart ? undefined : menuIndex.getWeek(weekStart)?.menuWeek
+// Cada número lleva a esa semana dentro del ciclo de rotación que se está viendo.
+const rotation = menu.weekly_menus.map(({ week }) => {
+  const target = menuIndex.rotationWeek(anchor, week)!
+  return { week, href: weekHref(target.start), color: weekColor(week) }
+})
+
+const navData = {
+  days: schoolDays.map((d) => d.date),
+  weeks: weeks.map((w) => w.start),
+  months,
+  dayBase: dayHref('__'),
+  weekBase: weekHref('__'),
+  monthBase: monthHref('__'),
+}
+
+const links = [
+  { key: 'menu', label: 'Menú de hoy', href: dayHref(schoolDays[0].date), nav: 'day' },
+  { key: 'calendario', label: 'Calendario', href: monthHref(months[0]), nav: 'month' },
+] as const
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Playfair+Display:wght@400..900&display=swap"
+    />
+    <title>{pageTitle}</title>
   </head>
-  <body>
-    <slot />
+  <body class="text-ink">
+    <div class="lg:grid lg:min-h-dvh lg:grid-cols-[16.5rem_minmax(0,1fr)]">
+      <div class="border-b border-line bg-sidebar lg:border-r lg:border-b-0">
+        <aside class="lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col">
+          <div
+            class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6 lg:block lg:px-6 lg:pt-8 lg:pb-6"
+          >
+            <a href={links[0].href} data-nav="day" class="block">
+              <span class="block font-display text-3xl leading-none font-bold text-brown">
+                Comedor
+              </span>
+              <span class="mt-1.5 block text-sm font-semibold text-muted">
+                Menú basal, curso 26/27
+              </span>
+            </a>
+
+            <nav aria-label="Secciones" class="lg:mt-10">
+              <ul class="flex gap-1 lg:flex-col">
+                {
+                  links.map((link) => (
+                    <li>
+                      <a
+                        href={link.href}
+                        data-nav={link.nav}
+                        aria-current={section === link.key ? 'page' : undefined}
+                        class="flex min-h-11 items-center rounded-xl px-3 text-[0.95rem] font-bold text-muted hover:bg-surface hover:text-ink aria-[current=page]:bg-mint-soft aria-[current=page]:text-mint-deep"
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))
+                }
+                <li>
+                  <a
+                    href="/menu-basal-2026-2027.pdf"
+                    class="flex min-h-11 items-center rounded-xl px-3 text-[0.95rem] font-bold text-muted hover:bg-surface hover:text-ink"
+                  >
+                    Menú en PDF
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+
+          <section
+            aria-labelledby="rotation-title"
+            class="mx-6 hidden border-t border-line pt-6 lg:block"
+          >
+            <h2 id="rotation-title" class="text-sm font-extrabold text-ink">Rotación del menú</h2>
+            <ol class="mt-3 grid grid-cols-6 gap-1.5">
+              {
+                rotation.map((r) => (
+                  <li>
+                    <a
+                      href={r.href}
+                      aria-label={`Semana ${r.week} de la rotación`}
+                      aria-current={r.week === currentRotation ? 'true' : undefined}
+                      class="flex aspect-square items-center justify-center rounded-lg border-2 text-sm font-extrabold tabular-nums"
+                      style={
+                        r.week === currentRotation
+                          ? `background:${r.color.base};border-color:${r.color.deep};color:var(--ink)`
+                          : `background:${r.color.tint};border-color:transparent;color:${r.color.deep}`
+                      }
+                    >
+                      {r.week}
+                    </a>
+                  </li>
+                ))
+              }
+            </ol>
+            <p class="mt-3 text-sm leading-relaxed text-muted">
+              El menú tiene {rotation.length} semanas que se repiten a lo largo del curso. El color de
+              cada una es el del menú impreso.
+            </p>
+          </section>
+
+          <p class="mt-auto hidden px-6 pb-6 text-sm leading-relaxed text-muted lg:block">
+            Información oficial en la{' '}
+            <a href={SCHOOL_URL} rel="noopener" class="font-bold text-mint-deep underline">
+              web del colegio
+            </a>
+          </p>
+        </aside>
+      </div>
+
+      <div class="min-w-0">
+        <main class="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+          <slot />
+        </main>
+        <footer class="mx-auto max-w-6xl px-4 pb-10 sm:px-8 lg:px-12">
+          <div
+            class="max-w-2xl space-y-2 border-t border-line pt-5 text-sm leading-relaxed text-muted"
+          >
+            <p>
+              Página personal sin relación con el colegio ni con la empresa del comedor. Solo
+              muestra el menú publicado de forma más cómoda; no garantiza que coincida con lo que se
+              sirve ni informa sobre alérgenos.
+            </p>
+            <p class="flex flex-wrap gap-x-5 gap-y-1 font-bold">
+              <a href={legalHref()} class="text-mint-deep underline">Aviso legal</a>
+              <a href={SCHOOL_URL} rel="noopener" class="text-mint-deep underline">
+                Información oficial del comedor
+              </a>
+            </p>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script type="application/json" id="nav-data" set:html={JSON.stringify(navData)} />
+    <script>
+      import { localISODate, monthKey, nearestAtOrBefore, startOfWeek } from '../lib/menu/dates'
+
+      const el = document.getElementById('nav-data')
+      if (el?.textContent) {
+        const data = JSON.parse(el.textContent) as {
+          days: string[]
+          weeks: string[]
+          months: string[]
+          dayBase: string
+          weekBase: string
+          monthBase: string
+        }
+        const today = localISODate()
+        // Hoy o, si no hay comedor, el siguiente día con menú.
+        const day = data.days.find((d) => d >= today) ?? data.days[data.days.length - 1]
+        const week = nearestAtOrBefore(data.weeks, startOfWeek(day))
+        const month = nearestAtOrBefore(data.months, monthKey(today))
+
+        const point = (nav: string, href: string) =>
+          document
+            .querySelectorAll<HTMLAnchorElement>(`a[data-nav="${nav}"]`)
+            .forEach((a) => a.setAttribute('href', href))
+        point('day', data.dayBase.replace('__', day))
+        point('week', data.weekBase.replace('__', week))
+        point('month', data.monthBase.replace('__', month))
+
+        document
+          .querySelectorAll(`[data-date="${today}"]`)
+          .forEach((node) => node.setAttribute('data-today', ''))
+      }
+    </script>
   </body>
 </html>
-
-<style>
-  html,
-  body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-  }
-</style>

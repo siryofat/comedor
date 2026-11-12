@@ -1,11 +1,33 @@
 ---
-import Welcome from '../components/Welcome.astro'
 import Layout from '../layouts/Layout.astro'
+import PageIntro from '../components/PageIntro.astro'
+import { menuIndex } from '../lib/menu'
+import { dayHref } from '../lib/routes'
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const { schoolDays } = menuIndex
+const redirect = {
+  days: schoolDays.map((d) => d.date),
+  base: dayHref('__'),
+}
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="Menú de hoy" section="menu" description="Menú del comedor escolar, curso 2026/27">
+  <script is:inline define:vars={{ redirect }}>
+    // Lleva al menú de hoy, o al siguiente día con comedor.
+    const d = new Date()
+    const today = [d.getFullYear(), d.getMonth() + 1, d.getDate()]
+      .map((n) => String(n).padStart(2, '0'))
+      .join('-')
+    const target = redirect.days.find((x) => x >= today) ?? redirect.days.at(-1)
+    location.replace(redirect.base.replace('__', target))
+  </script>
+  <PageIntro
+    title="¿Qué hay de comer?"
+    lead="El menú del comedor y lo que propone para el resto del día."
+  />
+  <p class="font-semibold">
+    <a href={dayHref(schoolDays[0].date)} data-nav="day" class="text-mint-deep underline">
+      Abrir el menú de hoy
+    </a>
+  </p>
 </Layout>
