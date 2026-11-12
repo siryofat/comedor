@@ -9,6 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "preview:cf": "astro build && wrangler dev",
+    "deploy": "astro build && wrangler deploy",
     "astro": "astro",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
@@ -42,7 +44,14 @@
     "tailwindcss": "^4.3.2",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.1",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.15",
+    "wrangler": "^4.160.1"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
+  }
 }

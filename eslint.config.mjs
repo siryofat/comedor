@@ -11,6 +11,7 @@ const setupRules = [
       '.next/**',
       'out/**',
       'coverage/**',
+      '.wrangler/**',
       '.agents/**',
     ],
   },
